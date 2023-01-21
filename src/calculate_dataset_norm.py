@@ -35,5 +35,5 @@ def main(dataset):
     
 if(__name__ == "__main__"):
     #dataset = sys.argv[1]
-    dataset = "FashionMNIST"
+    dataset = "CIFAR100"
     main(dataset)
