@@ -7,18 +7,26 @@ import os
 
 parser = ArgumentParser()
 parser.add_argument("-n", "--dry-run", action="store_true", help="perform a dry run")
-parser.add_argument("--target-path", type=str, help="path to sync", default="MEGalodon")
-parser.add_argument("--source-path", type=str, help="path to sync", default="MEGalodon")
+parser.add_argument("-p", "--path", type=str, help="path to sync", default="MEGalodon")
+parser.add_argument("-tp", "--target-path", type=str, help="path to sync")
+parser.add_argument("-sp", "--source-path", type=str, help="path to sync")
 args = parser.parse_args()
 
-HOME = os.environ["HOME"]
+if args.target_path is None:
+    TARGET_PATH = args.path
+else:
+    TARGET_PATH = args.target_path
+if args.source_path is None:
+    SOURCE_PATH = args.path
+else:
+    SOURCE_PATH = args.source_path
+    
 
+HOME = os.environ["HOME"]
 PROJECT = "coml-oxmedis"  # your ARC project name
 USER = "trin4076"  # your ARC username
 DATA = f"/data/{PROJECT}/{USER}"  # the path to the data directory on the ARC server
 HOST = "arc"  # the hostname of the ARC server
-TARGET_PATH = args.target_path  # the path to the directory on the ARC server
-SOURCE_PATH = args.source_path  # the path to the directory on your local machine
 RSYNC_OPTIONS = '--delete --exclude=".git" --exclude="wandb/" --exclude="*.zip" --exclude="__pycache__" --exclude=".idea/" --exclude=".pytest_cache" --exclude="cache" --exclude=".vscode/"'
 
 if args.dry_run:
