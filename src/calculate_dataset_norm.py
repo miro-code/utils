@@ -1,39 +1,38 @@
 import torchvision
-from torchvision import transforms 
-import numpy as np
-import sys 
+from torchvision import transforms
+import torch
+import sys
 
-def main(dataset):
+# Get dataset name from command line arguments
+dataset_name = sys.argv[1]
 
-    ds = getattr(torchvision.datasets, dataset)
-    if dataset == "CIFAR10":
-        train_set = ds(root="data", train=True, download=True, transform=transforms.ToTensor())
-        #print(vars(train_set))
-        print(train_set.data.shape)
-        print(train_set.data.mean(axis=(0,1,2))/255) #data in its raw form is in[0, 255] not [0,1] float
-        print(train_set.data.std(axis=(0,1,2))/255)
+# Fetch the dataset class dynamically from torchvision.datasets
+dataset_class = getattr(torchvision.datasets, dataset_name)
 
-    elif dataset == "CIFAR100":
-        train_set = ds(root="data", train=True, download=True, transform=transforms.ToTensor())
-        #print(vars(train_set))
-        print(train_set.data.shape)
-        print(np.mean(train_set.data, axis=(0,1,2))/255)
-        print(np.std(train_set.data, axis=(0,1,2))/255)
+# Define a generic transformation, converting images to tensors
+transform = transforms.ToTensor()
 
-    elif dataset == "MNIST":
-        train_set = ds(root="data", train=True, download=True, transform=transforms.ToTensor())
-        #print(vars(train_set))
-        print(list(train_set.data.size()))
-        print(train_set.data.float().mean()/255)
-        print(train_set.data.float().std()/255)
-    elif dataset == "FashionMNIST":
-        train_set = ds(root="data", train=True, download=True, transform=transforms.ToTensor())
-        #print(vars(train_set))
-        print(list(train_set.data.size()))
-        print(train_set.data.float().mean()/255)
-        print(train_set.data.float().std()/255)
-    
-if(__name__ == "__main__"):
-    #dataset = sys.argv[1]
-    dataset = "CIFAR100"
-    main(dataset)
+# Download and load the dataset
+train_set = dataset_class(root="data", train=True, download=True, transform=transform)
+
+# Determine whether the data is in PIL Image format or already a tensor
+if hasattr(train_set, 'data'):
+    # If data is already a tensor (e.g., CIFAR, MNIST)
+    data_tensor = train_set.data
+else:
+    # Convert data to tensor manually if it is in PIL Image format
+    # This loop will convert all images in the dataset to tensors and stack them into a single tensor
+    data_tensor = torch.stack([transform(img) for img, _ in train_set])
+
+# Check if the tensor is a floating point type and convert if not
+if not torch.is_floating_point(data_tensor):
+    data_tensor = data_tensor.float()
+
+# Normalize the data tensor by 255 if it is in the range [0, 255]
+if data_tensor.max() > 1:
+    data_tensor /= 255.0
+
+# Calculate and print size, mean, and std of the dataset
+print("Data shape:", data_tensor.shape)
+print("Mean of the data:", data_tensor.mean(dim=(0, 1, 2)).tolist())
+print("Standard deviation of the data:", data_tensor.std(dim=(0, 1, 2)).tolist())
