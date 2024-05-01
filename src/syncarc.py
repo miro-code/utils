@@ -23,7 +23,7 @@ else:
 
 
 HOME = os.environ["HOME"]
-PROJECT = "coml-oxmedis"  # your ARC project name
+PROJECT = "engs-pnpl"  # your ARC project name
 USER = "trin4076"  # your ARC username
 DATA = f"/data/{PROJECT}/{USER}"  # the path to the data directory on the ARC server
 HOST = "arc"  # the hostname of the ARC server
