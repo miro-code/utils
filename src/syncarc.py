@@ -20,14 +20,26 @@ if args.source_path is None:
     SOURCE_PATH = args.path
 else:
     SOURCE_PATH = args.source_path
-    
+
 
 HOME = os.environ["HOME"]
 PROJECT = "coml-oxmedis"  # your ARC project name
 USER = "trin4076"  # your ARC username
 DATA = f"/data/{PROJECT}/{USER}"  # the path to the data directory on the ARC server
 HOST = "arc"  # the hostname of the ARC server
-RSYNC_OPTIONS = '--delete --exclude=".git" --exclude="wandb/" --exclude="*.zip" --exclude="__pycache__" --exclude=".idea/" --exclude=".pytest_cache" --exclude="cache" --exclude=".vscode/"'
+
+excluded = [
+    ".git",
+    "wandb",
+    "*.zip",
+    "__pycache__",
+    ".pytest_cache",
+    ".vscode",
+    "data",
+    "lightning_logs",
+]
+excluded_str = " ".join([f'--exclude="{x}"' for x in excluded])
+RSYNC_OPTIONS = "--delete " + excluded_str
 
 if args.dry_run:
     RSYNC_OPTIONS += " -n"
