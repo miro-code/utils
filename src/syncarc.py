@@ -37,6 +37,7 @@ excluded = [
     ".vscode",
     "data",
     "lightning_logs",
+    ".DS_Store",
     ]
 result_dirs = [
     "results", 
